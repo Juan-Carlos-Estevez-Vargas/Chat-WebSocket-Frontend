@@ -1,6 +1,15 @@
 <div class="card mx-4 my-4">
   <div class="card-header">
     <ul class="nav nav-pills card-header-pills">
+      <li class="nav-item mr-2" *ngIf="!connected">
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="message.username"
+          placeholder="Add your name"
+          name="username"
+        />
+      </li>
       <li class="nav-item mr-2">
         <button
           class="btn btn-success"
@@ -27,18 +36,30 @@
     class="card-body"
     style="overflow: scroll; height: 360px"
     *ngIf="connected"
-  ></div>
+  >
+    <ul class="list-group">
+      <li
+        class="list-group-item list-group-item-light"
+        *ngFor="let message of messages"
+      >
+        {{ message.date | date: "shortTime" }} {{ message.text }}
+      </li>
+    </ul>
+  </div>
   <div class="card-footer" *ngIf="connected">
     <form class="form-inline">
       <div class="form-group mx-3">
         <input
           type="text"
           class="form-control"
+          [(ngModel)]="message.text"
           placeholder="Add message"
           name="text"
         />
       </div>
-      <button class="btn btn-primary" type="submit">Send</button>
+      <button class="btn btn-primary" type="submit" (click)="sendMessage()">
+        Send
+      </button>
     </form>
   </div>
 </div>
