@@ -16,6 +16,7 @@
           type="button"
           (click)="connect()"
           *ngIf="!connected"
+          [disabled]="!message.username"
         >
           Connect
         </button>
@@ -33,6 +34,8 @@
     </ul>
   </div>
   <div
+    #scrollChat
+    [scrollTop]="scrollChat.scrollHeight"
     class="card-body"
     style="overflow: scroll; height: 360px"
     *ngIf="connected"
@@ -69,11 +72,13 @@
           [(ngModel)]="message.text"
           placeholder="Add message"
           name="text"
+          (keyup)="writeEvent()"
         />
       </div>
       <button class="btn btn-primary" type="submit" (click)="sendMessage()">
         Send
       </button>
     </form>
+    <div style="color: gray">&nbsp;&nbsp;&nbsp;{{ typing }}</div>
   </div>
 </div>

@@ -14,6 +14,7 @@ export class ChatComponent implements OnInit {
   public connected: boolean = false;
   public messages: Message[] = [];
   public message: Message = new Message();
+  public typing: string;
 
   constructor() { }
 
@@ -28,7 +29,8 @@ export class ChatComponent implements OnInit {
     };
 
     /**
-     * Conecta al usuario al chat
+     * Conecta al usuario al chat, parsea el mensaje, setea la fecha, agrega un color a
+     * cada usuario y agrega una lista de mensajes
      */
     this.client.onConnect = (frame) => {
       this.connected = true;
@@ -42,6 +44,18 @@ export class ChatComponent implements OnInit {
         this.messages.push(message);
       });
 
+      /**
+       * Se encarga de asignar el texto de escribiendo cuando un usuario se 
+       * encuentre escribiendo un mensaje
+       */
+      this.client.subscribe('/chat/typing', e => {
+        this.typing = e.body;
+        setTimeout(() => this.typing = '', 3000);
+      });
+
+      /**
+       * Crea un usuario nuevo y publica su mensaje
+       */
       this.message.type = "NEW_USER";
       this.client.publish({ destination: '/app/message', body: JSON.stringify(this.message) });
     }
@@ -69,9 +83,19 @@ export class ChatComponent implements OnInit {
     this.client.deactivate();
   }
 
+  /**
+   * Envía y publica mensajes a los demás usuarios
+   */
   sendMessage(): void {
     this.message.type = "MESSAGE";
     this.client.publish({ destination: '/app/message', body: JSON.stringify(this.message) });
     this.message.text = '';
+  }
+
+  /**
+   * Evento escargado de mostrar el mensaje de 'user is typing'
+   */
+  writeEvent(): void {
+    this.client.publish({ destination: '/app/typing', body: JSON.stringify(this.message.username) });
   }
 }
