@@ -42,7 +42,21 @@
         class="list-group-item list-group-item-light"
         *ngFor="let message of messages"
       >
-        {{ message.date | date: "shortTime" }} {{ message.text }}
+        <span *ngIf="message.type == 'NEW_USER'">
+          {{ message.date | date: "shortTime" }} {{ message.text }}
+          <span [ngStyle]="{ color: message.color }">{{
+            message.username
+          }}</span>
+        </span>
+        <span *ngIf="message.type == 'MESSAGE'">
+          {{ message.date | date: "shortTime" }} -
+          <span [ngStyle]="{ color: message.color }">{{
+            message.username
+          }}</span>
+          dice :
+          <br />
+          {{ message.text }}
+        </span>
       </li>
     </ul>
   </div>
